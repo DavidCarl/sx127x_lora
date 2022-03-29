@@ -253,6 +253,17 @@ where
         Ok(())
     }
 
+    pub fn reset(
+        &mut self,
+        delay: &mut dyn DelayMs<u8>,
+    ) -> Result<(), Error<E, CS::Error, RESET::Error>> {
+        self.reset.set_low().map_err(Reset)?;
+        delay.delay_ms(10);
+        self.reset.set_high().map_err(Reset)?;
+        delay.delay_ms(10);
+        Ok(())
+    }
+
     /// Transmits up to 255 bytes of data. To avoid the use of an allocator, this takes a fixed 255 u8
     /// array and a payload size and returns the number of bytes sent if successful.
     pub fn transmit_payload_busy(
