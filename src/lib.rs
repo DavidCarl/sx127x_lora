@@ -219,7 +219,8 @@ where
         sx127x.reset.set_high().map_err(Reset)?;
         delay.delay_ms(10);
         let version = sx127x.read_register(Register::RegVersion.addr())?;
-        //if version == VERSION_CHECK {
+        //Println!(version)
+        if version == VERSION_CHECK {
             sx127x.set_mode(RadioMode::Sleep)?;
             sx127x.set_frequency(frequency)?;
             sx127x.write_register(Register::RegFifoTxBaseAddr.addr(), 0)?;
@@ -230,9 +231,9 @@ where
             sx127x.set_mode(RadioMode::Stdby)?;
             sx127x.cs.set_high().map_err(CS)?;
             Ok(sx127x)
-        //} else {
-        //    Err(Error::VersionMismatch(version))
-        //}
+        } else {
+            Err(Error::VersionMismatch(version))
+        }
     }
 
     /// Lets owner of the driver struct to reconfigure the radio.  Takes care of resetting the
