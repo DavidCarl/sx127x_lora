@@ -145,6 +145,11 @@
 //! support is available in `embedded-hal`, then this will be added. It is possible to implement this function on a
 //! device-to-device basis by retrieving a packet with the `read_packet()` function.
 
+#[macro_use]
+extern crate alloc;
+
+use alloc::vec::Vec;
+
 use bit_field::BitField;
 use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::blocking::spi::{Transfer, Write};
@@ -367,8 +372,9 @@ where
 
     /// Returns the contents of the fifo as a fixed 255 u8 array. This should only be called if there is a
     /// new packet ready to be read.
-    pub fn read_packet(&mut self) -> Result<[u8; 255], Error<E, CS::Error, RESET::Error>> {
-        let mut buffer = [0 as u8; 255];
+    pub fn read_packet(&mut self) -> Result<Vec<u8>, Error<E, CS::Error, RESET::Error>> {
+        //let mut buffer = [0 as u8; 255];
+        let mut buffer = Vec::new();
         self.clear_irq()?;
         let size = self.get_ready_packet_size()?;
         let fifo_addr = self.read_register(Register::RegFifoRxCurrentAddr.addr())?;
