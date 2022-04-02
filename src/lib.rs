@@ -374,14 +374,14 @@ where
     /// new packet ready to be read.
     pub fn read_packet(&mut self) -> Result<Vec<u8>, Error<E, CS::Error, RESET::Error>> {
         //let mut buffer = [0 as u8; 255];
-        let mut buffer = Vec::new();
+        let mut buffer= Vec::new();
         self.clear_irq()?;
         let size = self.get_ready_packet_size()?;
         let fifo_addr = self.read_register(Register::RegFifoRxCurrentAddr.addr())?;
         self.write_register(Register::RegFifoAddrPtr.addr(), fifo_addr)?;
         for i in 0..size {
             let byte = self.read_register(Register::RegFifo.addr())?;
-            buffer[i as usize] = byte;
+            buffer.push(byte);
         }
         self.write_register(Register::RegFifoAddrPtr.addr(), 0)?;
         Ok(buffer)
